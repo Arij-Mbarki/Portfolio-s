@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arij Mbarki — Data Analyst & Marketing Specialist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link rel="icon" href="PIC.jpg">
+  <meta name="description" content="Bilingual FR/EN portfolio—Education first, orgs kept, newsletters, videos, dashboards visuals.">
+  <style>
+    :root{--ring:#34d399}
+    .wiggle:hover{transform:translateY(-1px) rotate(-0.5deg)}
+    .fade-in{animation:fadein .6s ease both}
+    @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    html{scroll-behavior:smooth}
+  </style>
+</head>
+<body class="bg-neutral-950 text-neutral-100">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useMemo, useState, useEffect } = React;
+
+    // Brand
+    const makeBrand=(m="dark")=>{
+      const d=m==="dark";
+      return{
+        page:d?"bg-gradient-to-b from-neutral-950 via-neutral-900 to-emerald-950/10 text-neutral-100":"bg-gradient-to-b from-white via-neutral-50 to-emerald-50 text-neutral-900",
+        card:d?"rounded-2xl border border-neutral-800 bg-neutral-900/60 backdrop-blur":"rounded-2xl border border-emerald-200 bg-white/80 backdrop-blur",
+        chip:d?"px-3 py-1 rounded-full bg-neutral-800/60 border border-neutral-700":"px-3 py-1 rounded-full bg-emerald-50 border-emerald-200",
+        accentText:d?"text-emerald-300":"text-emerald-700",
+        accentBg:d?"bg-emerald-500/10 border-emerald-600/30":"bg-emerald-100 border-emerald-300",
+        btnPrimary:d?"px-4 py-2 rounded-xl bg-emerald-400 text-neutral-950 hover:bg-emerald-300 transition shadow wiggle":"px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 transition shadow wiggle",
+        btnSecondary:d?"px-4 py-2 rounded-xl bg-neutral-900 border border-emerald-700/40 text-neutral-100 hover:border-emerald-500/60 transition wiggle":"px-4 py-2 rounded-xl bg-white border-emerald-300 text-neutral-900 hover:border-emerald-500 transition wiggle",
+        underline:d?"relative inline-block after:block after:h-[2px] after:w-full after:bg-emerald-500 after:rounded after:mt-1":"relative inline-block after:block after:h-[2px] after:w-full after:bg-emerald-600 after:rounded after:mt-1",
+        subtleText:d?"text-neutral-300":"text-neutral-600",
+        mutedText:d?"text-neutral-400":"text-neutral-500",
+      }
+    };
+
+    // i18n
+    const T = {
+      en: {
+        role: "Data Analyst & Marketing Specialist — turning insights into growth",
+        availability: "Open to 12-month alternance from Oct 2025 (Marketing/Data)",
+        location: "Tunis → Paris (2025–2026)",
+        heroBlurb: "Data-driven marketer with a Monitoring & Evaluation backbone. I turn messy data into clear insights, crisp visuals, and actions.",
+        downloadCV: "Download CV", copyEmail: "Copy Email", copied:"Copied!",
+        education: "Education & Relevant Coursework",
+        projects: "Projects",
+        experience: "Experience",
+        skills: "Skills",
+        contact: "Say hi 👋",
+        contactNote: "Prefer a quick form? It opens your email app with your message.",
+        newsletters: "Newsletters",
+        videos: "Videos — shot, edited & subtitled",
+        seeNewsletter: "Open newsletter",
+        seeVideo: "Open video",
+        dashboards: "Dashboards (visual examples)",
+        dashboardsNote: "Screens from official UNDP communications (privacy-safe examples).",
+        top: "Top", themeLight:"☀️ Light", themeDark:"🌙 Dark", lang:"FR/EN"
+      },
+      fr: {
+        role: "Data Analyst & Marketing Specialist — des insights qui deviennent de la croissance",
+        availability: "Disponible pour une alternance 12 mois dès oct. 2025 (Marketing/Data)",
+        location: "Tunis → Paris (2025–2026)",
+        heroBlurb: "Marketeuse pilotée par la donnée avec une base Suivi-Évaluation. J’orchestre data, visuels et actions.",
+        downloadCV: "Télécharger le CV", copyEmail: "Copier l’e-mail", copied:"Copié !",
+        education: "Formation & Cours clés",
+        projects: "Projets",
+        experience: "Expérience",
+        skills: "Compétences",
+        contact: "Contact 👋",
+        contactNote: "Un court formulaire ? Il ouvre votre app d’e-mail avec le message.",
+        newsletters: "Newsletters",
+        videos: "Vidéos — tournage, montage & sous-titres",
+        seeNewsletter: "Ouvrir la newsletter",
+        seeVideo: "Voir la vidéo",
+        dashboards: "Dashboards (exemples visuels)",
+        dashboardsNote: "Captures issues des communications officielles du PNUD (données privées protégées).",
+        top: "Haut", themeLight:"☀️ Clair", themeDark:"🌙 Sombre", lang:"FR/EN"
+      }
+    };
+
+    // Content
+    const profile = {
+      name:"Arij Mbarki",
+      email:"arij.mbarki.25@neoma-bs.com",
+      linkedin:"https://www.linkedin.com/in/arij-mbarki-18aa4b216/",
+      cv:"CV_Arij_Mbarki.pdf",
+      photo:"PIC.jpg",
+      logo:"AM.png" // will show if uploaded; otherwise ignored by browser
+    };
+
+    const education = [
+      { school:"NEOMA Business School (Paris)", degree:"Mastère Spécialisé — Marketing & Data Analytics", period:"2025 – 2026", highlights:["Market analytics","CRM & lifecycle","A/B testing","Segmentation","Data viz (Power BI/Tableau)","Statistics"]},
+      { school:"Tunis Business School & ESSECT", degree:"Master — Management des ONG", period:"2022 – 2025", highlights:["Impact evaluation","Survey design (ODK/KOBO)","Reporting & dashboards","Stakeholder comms"]},
+      { school:"ESSECT", degree:"Licence appliquée — Économie (Banque/Assurance/Finance)", period:"2018 – 2021", highlights:["Micro/Macro","Econometrics","Statistics"]},
+    ];
+
+    const experiences = [
+      { org:"UNDP Tunisia", role:"Monitoring, Evaluation & Data Collection Assistant", period:"Sep 2024 – Present", bullets:["Tracked KPIs across 33 communities; dashboards (Excel/Power BI), mid-year reviews.","Built ODK/KOBO surveys improving data quality & response rates.","Revamped newsletters/infographics; +~35% engagement."]},
+      { org:"FHI 360 — USAID Ma3an", role:"Monitoring, Evaluation & Learning (MEL) Associate", period:"Nov 2023 – Sep 2024", bullets:["Outcome tracking for ~33,000 youth; mixed-methods insights.","Streamlined indicator documentation; contributed to reports & learning products."]},
+      { org:"Banque Nationale Agricole (BNA)", role:"Analyste Crédit (Stage)", period:"2021", bullets:["Analyse dossiers, risk scoring, check-list improvements."]},
+    ];
+
+    const projects = [
+      { title:"Retail Marketing & Data Dashboard (demo)", year:"2025", tags:["Power BI","Cohorts","Promo ROI"], blurb:"Dashboard liant ventes, rétention par cohortes et impact promo — pour de vraies décisions merchandising.", img:"https://images.unsplash.com/photo-1551281044-8a5d6b2a3a60?q=80&w=1200&auto=format&fit=crop", points:["Cohort retention","Promo uplift","RFM segmentation"]},
+      { title:"NGO Water Scarcity Impact Study", year:"2024", tags:["Impact Eval","SPSS","Survey Design"], blurb:"Étude AJEM & Assidje — méthodologie mixte, apprentissages communautaires, durabilité.", img:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1200&auto=format&fit=crop", points:["Sampling & tools","Data cleaning","Story-driven reporting"]},
+      { title:"Internal Newsletter Revamp (UNDP)", year:"2024", tags:["Content","Design","Analytics"], blurb:"Nouveau template + tracking; itérations data-informed sur opens/CTR.", img:"https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1200&auto=format&fit=crop", points:["Open rate + CTR","Template system","KPI dashboard"]},
+    ];
+
+    const newsletters = [
+      { title:"Newsletter — Février", url:"https://mailchi.mp/f03e2e0d58f0/newsletter-fvrier-2894751" },
+      { title:"Zarzis — March 2025 (ENG)", url:"https://zarzis-newsletter.my.canva.site/march-2025-eng" },
+      { title:"Zarzis — Hub", url:"https://zarzis-newsletter.my.canva.site/" }
+    ];
+
+    const videos = [
+      { title:"LNOB — Video 1", url:"https://www.linkedin.com/posts/undp-tunisia_lnob-activity-7341446281883541504-zAZ6" },
+      { title:"LNOB — Video 2", url:"https://www.linkedin.com/posts/undp-tunisia_lnob-activity-7341137290947145729-FUMA" }
+    ];
+
+    // placeholder visuals (privacy-safe)
+    const dashboardImgs = [
+      "https://images.unsplash.com/photo-1551281044-8a5d6b2a3a60?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200&auto=format&fit=crop"
+    ];
+
+    // helpers
+    function useTypewriter(words,speed=80,hold=1200){
+      const [i,setI]=useState(0),[sub,setSub]=useState(0),[dir,setDir]=useState(1);
+      useEffect(()=>{
+        const w=words[i%words.length];
+        if(dir===1 && sub===w.length){const t=setTimeout(()=>setDir(-1),hold);return()=>clearTimeout(t);}
+        if(dir===-1 && sub===0){setDir(1);setI(v=>(v+1)%words.length);return;}
+        const t=setTimeout(()=>setSub(s=>s+dir),speed);return()=>clearTimeout(t);
+      },[sub,dir,i,words,speed,hold]);
+      return words[i%words.length].slice(0,sub);
+    }
+
+    let brand=makeBrand(localStorage.getItem("theme")||"dark");
+    function Chip({children,active,onClick}){return <button onClick={onClick} className={`${brand.chip} ${active?brand.accentBg+' '+brand.accentText:''} hover:border-emerald-500/60 transition`}>{children}</button>}
+    function Card({title,items}){return (<div className={"p-4 "+brand.card}><p className="font-medium mb-2">{title}</p><div className="flex flex-wrap gap-2">{items.map((x,i)=>(<span key={i} className={brand.chip+" text-xs"}>{x}</span>))}</div></div>)}
+    function Contact(){
+      const[name,setName]=useState(""),[email,setEmail]=useState(""),[msg,setMsg]=useState("");
+      function submit(e){e.preventDefault();const subject=encodeURIComponent("Portfolio contact — "+name);const body=encodeURIComponent(`From: ${name} <${email}>\n\n${msg}`);window.location.href=`mailto:${profile.email}?subject=${subject}&body=${body}`}
+      return(<div className={"p-5 mt-4 "+brand.card}><p className="font-medium mb-2">Contact</p>
+        <form onSubmit={submit} className="grid gap-3">
+          <input required value={name} onChange={e=>setName(e.target.value)} placeholder="Your name / Votre nom" className="px-3 py-2 rounded-xl border outline-none bg-transparent"/>
+          <input required type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Your email / Votre e-mail" className="px-3 py-2 rounded-xl border outline-none bg-transparent"/>
+          <textarea required value={msg} onChange={e=>setMsg(e.target.value)} placeholder="Your message / Votre message" rows="4" className="px-3 py-2 rounded-xl border outline-none bg-transparent"></textarea>
+          <button className={brand.btnPrimary+" w-fit"}>Send ✉️ / Envoyer</button>
+          <p className="text-neutral-400 text-xs">Opens your mail app — no backend / Ouvre votre app mail — pas de backend.</p>
+        </form></div>);
+    }
+
+    function App(){
+      const[theme,setTheme]=useState(localStorage.getItem("theme")||"dark");
+      const[lang,setLang]=useState(localStorage.getItem("lang")||"en");
+      brand=makeBrand(theme);
+      const year=useMemo(()=>new Date().getFullYear(),[]);
+      const typed=useTypewriter(["Data Analyst","Marketing Specialist","CRM & A/B Testing","Power BI & Tableau"]);
+      const[copied,setCopied]=useState(false),[activeTag,setActiveTag]=useState("All"),[selected,setSelected]=useState(null);
+      const filtered=activeTag==="All"?projects:projects.filter(p=>p.tags.includes(activeTag));
+      async function copyEmail(){try{await navigator.clipboard.writeText(profile.email);setCopied(true);confetti({particleCount:60,spread:60,origin:{y:0.25}});setTimeout(()=>setCopied(false),1200)}catch{}}
+      function toggleTheme(){const t=theme==="dark"?"light":"dark";setTheme(t);localStorage.setItem("theme",t)}
+      function toggleLang(){const l=lang==="en"?"fr":"en";setLang(l);localStorage.setItem("lang",l)}
+      const L=T[lang];
+
+      return (<main className={"min-h-screen "+brand.page}>
+        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2">
+          <img src={profile.logo} onError={(e)=>{e.target.style.display='none'}} alt="AM" className="w-9 h-9 rounded-md border border-emerald-700 bg-white p-1"/>
+          <button onClick={toggleLang} className={brand.btnSecondary+" text-xs"}>{L.lang}</button>
+          <button onClick={toggleTheme} className={brand.btnSecondary+" text-xs"}>{theme==="dark"?L.themeLight:L.themeDark}</button>
+        </div>
+
+        <!-- HERO -->
+        <section className="max-w-5xl mx-auto px-6 pt-20 pb-10">
+          <div className="grid md:grid-cols-[140px_1fr] gap-6 items-center fade-in">
+            <img src={profile.photo} alt="Arij Mbarki" className="w-32 h-32 rounded-2xl object-cover border border-emerald-700 shadow"/>
+            <div>
+              <h1 className={"text-3xl md:text-4xl font-semibold tracking-tight "+brand.underline}>Arij Mbarki</h1>
+              <p className={"mt-1 "+brand.subtleText}>{L.role} <span className="opacity-70">|</span> <span className={brand.accentText}>{typed}</span><span className="opacity-60">▌</span></p>
+              <p className={"mt-4 max-w-2xl "+brand.subtleText}>{L.heroBlurb}</p>
+              <div className="mt-4 flex flex-wrap gap-3 text-sm">
+                <span className={brand.chip}>{L.location}</span>
+                <span className={brand.chip+" "+brand.accentBg+" "+brand.accentText}>{L.availability}</span>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3 items-center">
+                <a href={profile.linkedin} className={brand.btnSecondary} target="_blank" rel="noreferrer">LinkedIn ✨</a>
+                <a href={profile.cv} className={brand.btnSecondary}>{L.downloadCV}</a>
+                <button onClick={copyEmail} className={brand.btnPrimary}>{L.copyEmail} 📋</button>
+                {copied&&(<span className={brand.chip+" "+brand.accentBg+" "+brand.accentText} role="status">{L.copied}</span>)}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- EDUCATION -->
+        <section id="education" className="max-w-5xl mx-auto px-6 py-8">
+          <h2 className={"text-xl font-semibold mb-4 "+brand.underline}>{L.education}</h2>
+          <div className="grid gap-4">
+            {education.map((ed,i)=>(
+              <div key={i} className={brand.card+" p-4 fade-in"} style={{animationDelay:`${i*60}ms`}}>
+                <div className="flex items-center justify-between">
+                  <div><p className="font-medium">{ed.degree}</p><p className={brand.subtleText}>{ed.school}</p></div>
+                  <span className="text-neutral-400 text-sm">{ed.period}</span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                  {ed.highlights.map((h,j)=>(<span key={j} className={brand.chip}>{h}</span>))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- NEWSLETTERS -->
+        <section className="max-w-5xl mx-auto px-6 py-8">
+          <h2 className={"text-xl font-semibold mb-4 "+brand.underline}>{L.newsletters}</h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            {newsletters.map((n,i)=>(
+              <a key={i} href={n.url} target="_blank" rel="noreferrer" className={brand.card+" p-4 hover:scale-[1.01] transition"}>
+                <p className="font-medium">{n.title}</p>
+                <p className={brand.mutedText+" text-sm mt-1"}>{L.seeNewsletter}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <!-- PROJECTS -->
+        <section id="projects" className="max-w-5xl mx-auto px-6 py-8">
+          <h2 className={"text-xl font-semibold mb-2 "+brand.underline}>{L.projects}</h2>
+          <div className="mb-4 flex flex-wrap gap-2 text-sm">
+            {["All", ...new Set(projects.flatMap(p=>p.tags))].map(tg=>(
+              <button key={tg} onClick={()=>setActiveTag(tg)} className={`${brand.chip} ${tg===activeTag?brand.accentBg+' '+brand.accentText:''}`}>{tg}</button>
+            ))}
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {filtered.map((p,i)=>(
+              <button key={i} onClick={()=>setSelected(p)} className={brand.card+" overflow-hidden group text-left hover:scale-[1.01] transition fade-in"} style={{animationDelay:`${i*60}ms`}}>
+                <div className="aspect-video overflow-hidden"><img src={p.img} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition"/></div>
+                <div className="p-4">
+                  <div className="flex items-center justify-between"><p className="font-medium">{p.title}</p><span className="text-xs text-neutral-400">{p.year}</span></div>
+                  <p className={"mt-1 text-sm "+brand.subtleText}>{p.blurb}</p>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs">{p.tags.map((tg,j)=>(<span key={j} className={brand.chip}>{tg}</span>))}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {selected && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/60" onClick={()=>setSelected(null)}></div>
+              <div className={brand.card+" relative max-w-2xl mx-auto overflow-hidden"}>
+                <img src={selected.img} alt="" className="w-full h-56 object-cover"/>
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div><h3 className="text-lg font-semibold">{selected.title}</h3><p className="text-sm text-neutral-400">{selected.year}</p></div>
+                    <button className={brand.btnSecondary} onClick={()=>setSelected(null)}>Close</button>
+                  </div>
+                  <p className={"mt-2 "+brand.subtleText}>{selected.blurb}</p>
+                  <ul className={"mt-3 list-disc list-inside text-sm "+brand.subtleText+" space-y-1"}>{selected.points?.map((pt,i)=>(<li key={i}>{pt}</li>))}</ul>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+
+        <!-- DASHBOARDS (visuals only) -->
+        <section className="max-w-5xl mx-auto px-6 py-8">
+          <h2 className={"text-xl font-semibold mb-2 "+brand.underline}>{L.dashboards}</h2>
+          <p className="text-neutral-400 mb-3 text-sm">{L.dashboardsNote}</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            {dashboardImgs.map((u,i)=>(
+              <div key={i} className={brand.card+" overflow-hidden"}>
+                <img src={u} alt="Dashboard visual example" className="w-full h-56 object-cover"/>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- EXPERIENCE -->
+        <section id="experience" className="max-w-5xl mx-auto px-6 py-8">
+          <h2 className={"text-xl font-semibold mb-4 "+brand.underline}>{L.experience}</h2>
+          <div className="grid gap-4">
+            {experiences.map((e,i)=>(
+              <div key={i} className={brand.card+" p-5 fade-in"} style={{animationDelay:`${i*60}ms`}}>
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <div><p className="font-medium">{e.role}</p><p className={brand.subtleText}>{e.org}</p></div>
+                    <span className="text-sm text-neutral-400">{e.period}</span>
+                  </div>
+                  <ul className={"mt-3 list-disc list-inside "+brand.subtleText+" space-y-1"}>{e.bullets.map((b,j)=>(<li key={j}>{b}</li>))}</ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- VIDEOS -->
+        <section className="max-w-5xl mx-auto px-6 py-8">
+          <h2 className={"text-xl font-semibold mb-4 "+brand.underline}>{L.videos}</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {videos.map((v,i)=>(
+              <a key={i} href={v.url} target="_blank" rel="noreferrer" className={brand.card+" p-4 hover:scale-[1.01] transition"}>
+                <p className="font-medium">{v.title}</p>
+                <p className="text-neutral-400 text-sm mt-1">{L.seeVideo}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <!-- SKILLS -->
+        <section id="skills" className="max-w-5xl mx-auto px-6 py-8">
+          <h2 className={"text-xl font-semibold mb-4 "+brand.underline}>{L.skills}</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className={"p-4 "+brand.card}><p className="font-medium mb-2">Data & Analytics</p><div className="flex flex-wrap gap-2"><span className={brand.chip+" text-xs"}>Excel</span><span className={brand.chip+" text-xs"}>SPSS</span><span className={brand.chip+" text-xs"}>Power BI</span><span className={brand.chip+" text-xs"}>Tableau</span><span className={brand.chip+" text-xs"}>ODK</span><span className={brand.chip+" text-xs"}>KOBO</span></div></div>
+            <div className={"p-4 "+brand.card}><p className="font-medium mb-2">Marketing</p><div className="flex flex-wrap gap-2"><span className={brand.chip+" text-xs"}>CRM</span><span className={brand.chip+" text-xs"}>Emailing (Mailchimp)</span><span className={brand.chip+" text-xs"}>A/B testing</span><span className={brand.chip+" text-xs"}>Segmentation</span></div></div>
+            <div className={"p-4 "+brand.card}><p className="font-medium mb-2">Design & Visuals</p><div className="flex flex-wrap gap-2"><span className={brand.chip+" text-xs"}>Canva Pro</span><span className={brand.chip+" text-xs"}>Photoshop</span><span className={brand.chip+" text-xs"}>Infographics</span><span className={brand.chip+" text-xs"}>Presentations</span></div></div>
+            <div className={"p-4 "+brand.card}><p className="font-medium mb-2">Management</p><div className="flex flex-wrap gap-2"><span className={brand.chip+" text-xs"}>Suivi-évaluation</span><span className={brand.chip+" text-xs"}>Project coordination</span><span className={brand.chip+" text-xs"}>Reporting</span><span className={brand.chip+" text-xs"}>Stakeholder comms</span></div></div>
+            <div className={"p-4 "+brand.card}><p className="font-medium mb-2">Languages</p><div className="flex flex-wrap gap-2"><span className={brand.chip+" text-xs"}>Arabic (native)</span><span className={brand.chip+" text-xs"}>French (B2-C1)</span><span className={brand.chip+" text-xs"}>English (C)</span><span className={brand.chip+" text-xs"}>Spanish (A2)</span></div></div>
+          </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" className="max-w-5xl mx-auto px-6 py-8">
+          <h2 className={"text-xl font-semibold mb-2 "+brand.underline}>{L.contact}</h2>
+          <p className="text-neutral-400 mb-2 text-sm">{L.contactNote}</p>
+          {React.createElement(Contact,{})}
+        </section>
+
+        <footer className="max-w-5xl mx-auto px-6 py-12 text-sm">
+          <nav className="flex flex-wrap gap-4 mb-3">
+            <a href="#" className={brand.chip}>{L.top}</a>
+            <a href="#education" className={brand.chip}>{L.education}</a>
+            <a href="#projects" className={brand.chip}>{L.projects}</a>
+            <a href="#experience" className={brand.chip}>{L.experience}</a>
+            <a href="#skills" className={brand.chip}>{L.skills}</a>
+            <a href="#contact" className={brand.chip}>{L.contact}</a>
+          </nav>
+          <p className="text-neutral-400">© {year} {profile.name}. Built with ❤️ React & Tailwind.</p>
+        </footer>
+      </main>);
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+  </script>
+</body>
+</html>
